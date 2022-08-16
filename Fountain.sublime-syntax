@@ -1,0 +1,227 @@
+%YAML 1.2
+---
+file_extensions:
+  - fountain
+  - ftn
+scope: text.fountain
+
+variables:
+  title_page: '^(?i)\b(format|title|credit|authors?|source|draft date|contact|copyright|notes|revision|top center|top left|top right|center center|bottom left|bottom right|cc|tl|tc|tr|cc|bl|br)\b:'
+  scene_head: ^(?i)((\.(?!\.)|scene\.|int\.|ext\.|est\.|i/e\.|int\.?/ext\.?|flashback\.)[\p{L}\p{N}/\-—\(\)'\|., ]*)
+
+contexts:
+  title:
+    - match: '{{title_page}}'
+      captures:
+        1: variable.language
+      push:
+        - include: boneyard
+        - include: markup
+        - meta_content_scope: string.unquoted
+        - match: ^(?!\s)
+          pop: true
+        - match: ^$
+          pop: true
+
+  scene:
+    - match: '{{scene_head}}$'
+      scope: entity.name.section
+    - match: '{{scene_head}}( )(\#.*\#)$'
+      captures:
+        1: entity.name.section
+        4: entity.name.enum
+
+  highland_special:
+    - match: (?i){{
+      push:
+        - match: \b(include)\b
+          scope: keyword.control.import
+          push:
+            - match: ':'
+            - match: '[\w/\\\.]+'
+              scope: include # this is a made up scope
+            - match: '}}'
+              pop: 2
+        - match: \b(timestamp|header|footer|series|chapter|panel|figure|watermark)\b
+          scope: meta.preprocessor
+        - match: '}}'
+          pop: true
+
+  action:
+    # @todo should all force chars
+    # be support.constant?
+    # so far "@", "!" are.
+    - match: ^!
+      scope: support.constant
+
+  note:
+    - match: \[\[\s*(?=\S)
+      scope: comment
+      push:
+        - meta_scope: meta.string
+        - include: markup
+        - include: at_tags
+        - match: '[^\]]'
+          scope: comment
+        - match: $
+          pop: true
+        - match: \]\]
+          scope: comment
+          pop: true
+
+  boneyard:
+    - match: /\*
+      scope: punctuation.definition.comment
+      push:
+        - include: at_tags
+        - meta_scope: comment.block
+        - match: \*/
+          scope: punctuation.definition.comment
+          pop: true
+
+  parentheticals:
+    - match: ^\s*\(
+      scope: punctuation.section.parens.begin
+      push:
+        - meta_scope: meta.parens
+        - match: \)
+          scope: punctuation.section.parens.end
+          pop: true
+        - match: ^$
+          pop: true
+
+  characters:
+    # forced
+    - match: ^\s*(\@)(.+)$
+      captures:
+        1: support.constant
+        2: string
+      push:
+        - include: boneyard
+        - include: parentheticals
+        - include: markup
+        - include: note
+        - match: ^$
+          pop: true
+
+    # regular
+    - match: ^\s*[^\d](Ma?c)?[\p{Lu}\p{N}\^\' ]+(\(.*\)+)?$
+      scope: string
+      push:
+        - include: boneyard
+        - include: parentheticals
+        - include: markup
+        - include: note
+        - match: ^$
+          pop: true
+
+  # @todo markup support here
+  centered:
+    - match: ^\s*\>.+\<$
+      scope: centered
+
+  transition:
+    - match: (?i)^\s*.+to:$|^\s*\>.+$
+      scope: entity.name.tag # change this
+
+  lyrics:
+    - match: ^~.+
+      scope: lyrics # change this
+
+  sections:
+    - match: ^#+.+$
+      scope: punctuation.definition.heading
+
+  synopses:
+    - match: ^\s*=
+      scope: punctuation.definition.comment
+      push:
+        - meta_scope: comment.line
+        - match: $
+          pop: true
+
+  pagebreak:
+    - match: ===$
+      scope: comment
+
+  at_tags:
+    - match: (?i)@\b(\S+)\b
+      scope: constant.language
+
+  markup_bold_italic:
+    - match: (?<!\\)\*\*\*(?!\s)
+      scope: comment
+      push:
+        - include: markup_highlight
+        - meta_scope: markup.italic
+        - match: (?<!\s)\*\*\*
+          scope: comment
+          pop: true
+        - match: ^$
+          pop: true
+
+  markup_bold:
+    - match: (?<!\\)\*\*(?!\s)
+      scope: comment
+      push:
+        - include: markup_highlight
+        - meta_scope: markup.bold
+        - match: (?<!\s)\*\*
+          scope: comment
+          pop: true
+        - match: ^$
+          pop: true
+
+  markup_italic:
+    - match: (?<!\\)\*(?!\s)
+      scope: comment
+      push:
+        - include: markup_highlight
+        - meta_scope: markup.italic
+        - match: (?<!\s)\*
+          scope: comment
+          pop: true
+        - match: ^$
+          pop: true
+
+  markup_underline:
+    - match: (?<!\\)(_)(?!\s)
+      scope: comment
+      push:
+        - include: markup_highlight
+        - meta_content_scope: markup.underline
+        - match: (?<!\s)_
+          scope: comment
+          pop: true
+        - match: ^$
+          pop: true
+
+  markup_highlight:
+    - match: (?<!\\)(\+)(?!\s)(.+?)(?<!\s)(\+)
+      captures:
+        1: comment
+        2: markup.quote
+        3: comment
+
+  markup:
+    - include: markup_bold_italic
+    - include: markup_bold
+    - include: markup_italic
+    - include: markup_underline
+    - include: markup_highlight
+
+  main:
+    - include: title
+    - include: sections
+    - include: scene
+    - include: action
+    - include: note
+    - include: boneyard
+    - include: characters
+    - include: centered
+    - include: transition
+    - include: lyrics
+    - include: pagebreak
+    - include: synopses
+    - include: markup
+    - include: highland_special

@@ -1,0 +1,28 @@
+[
+	{
+		"caption": "Meander: Next Section",
+		"command": "meander_move_to_section",
+		"args": {
+			"forward": true
+		}
+	},
+	{
+		"caption": "Meander: Previous Section",
+		"command": "meander_move_to_section",
+		"args": {
+			"forward": false
+		}
+	},
+	{
+		"caption": "Meander: Add Scene Numbers",
+		"command": "meander_add_scene_number"
+	},
+	{
+		"caption": "Meander: Remove Scene Numbers",
+		"command": "meander_remove_scene_number"
+	},
+	{
+		"caption": "Meander: Toggle Boneyards",
+		"command": "meander_toggle_boneyard"
+	}
+]

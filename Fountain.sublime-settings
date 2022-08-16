@@ -1,0 +1,13 @@
+{
+	"extensions":
+	[
+		"fountain",
+		"ftn"
+	],
+	"word_wrap": true,
+	"wrap_width": 62,
+	"draw_centered": true,
+	"spell_check": false,
+	"line_numbers": false,
+	"show_panel_on_build": false,
+}

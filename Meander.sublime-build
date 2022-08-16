@@ -1,0 +1,19 @@
+{
+	"selector": "text.fountain",
+	"file_patterns": [
+		"*.fountain",
+		"*.ftn"
+	],
+	"working_dir": "$file_path",
+	"cmd": ["meander", "$file_name"],
+	"variants": [
+		{
+			"name": "Generate Scenes",
+			"cmd": ["meander", "$file_name", "-s", "generate"],
+		},
+		{
+			"name": "Gender Analysis",
+			"cmd": ["meander", "gender", "$file_name"],
+		}
+	]
+}
