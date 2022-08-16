@@ -1,5 +1,9 @@
 [
 	{
-		"keys": ["f12"], "command": "meander_open_include",
+		"keys": ["f12"],
+		"command": "meander_open_include",
+		"context": [
+			{"key": "selector", "operand": "text.fountain"}
+		]
 	},
 ]
