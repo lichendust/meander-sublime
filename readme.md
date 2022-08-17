@@ -19,7 +19,8 @@ Meander for Sublime Text is also intended as a reference implementation for how 
 	- [Remove Scene Numbers](#remove-scene-numbers)
 	- [Toggle Boneyards](#toggle-boneyards)
 - [Syntax](#syntax)
-- [Planned/Experimental Features](#plannedexperimental-features)
+	- [Scope List](#scope-list)
+- [Project Files](#project-files)
 
 <!-- /MarkdownTOC -->
 
@@ -55,19 +56,21 @@ Sublime Command: `meander_open_include`
 
 "Open Include" is a drop-in replacement for Sublime's "Goto Definition" that allows the user to open the file path of an `{{include}}` from its reference in the text.
 
-This is enabled by default within the package, using `F12`, which idiomatically replaces the default "Goto Definition" shortcut.
+This is enabled by default within the package, using F12, which idiomatically replaces the default "Goto Definition" shortcut.
 
 ### Add Scene Numbers
 
 Sublime Command: `meander_add_scene_numbers`
 
-Adds `#1#` formatted scene numbers to every scene heading, *replacing any existing ones*.  This only provides integer numbering and does not cross over included files.
+Adds `#1#` formatted scene numbers to every scene heading, **replacing any existing ones**.  This only provides integer numbering and does not cross over included files; it operates on the active buffer only.
+
+This is obviously a feature better provided by Meander itself, but in the event that you want to bake scene numbers directly into the text, such as for an archival copy, you might use Meander's text merge to produce a monolithic file and then this command to write in the plain text scene numbers.
 
 ### Remove Scene Numbers
 
 Sublime Command: `meander_remove_scene_numbers`
 
-Strips out any `#1#` scene numbers from the current file.  The removal command (and syntax highlighting) will catch any valid scene numbers, such as `#1#`, `#1-A#`, `#1.A-A#`.
+Strips out any `#1#` scene numbers from the current file.  The removal command will catch any valid scene numbers, such as `#1#`, `#1-A#`, `#1.A-A#`.
 
 ### Toggle Boneyards
 
@@ -77,11 +80,11 @@ Hides or reveals (by folding) all `/* boneyard */` regions in the current file, 
 
 ## Syntax
 
-The included syntax definition for Fountain, supports the additional syntax extensions Meander has either provided or supported from other Fountain editors.
+The included syntax definition for Fountain, in addition to the base syntax, supports the additional extensions Meander has either provided or supported from other Fountain editors.
 
-The scope names are carefully selected to match other markup languages and use Sublime's own [Scope Naming] recommendations where possible to ensure most themes will look sensible out of the box.
+The scope names are carefully selected to match other markup languages and use Sublime's own [Scope Naming](https://www.sublimetext.com/docs/scope_naming.html) recommendations where possible to ensure most themes will look sensible out of the box.
 
-The entire Fountain scope is defined under `text.fountain`, allowing savvy users to make specific tweaks to their themes for better support.  Here's one I use personally, which inverts scene headings (and scene numbers) to make them extremely visible:
+The parent Fountain scope is `text.fountain`, allowing savvy users to make specific tweaks to their themes for better support.  Here's one I use personally, which inverts scene headings (and scene numbers) to make them extremely visible:
 
 ```json
 {
@@ -100,6 +103,50 @@ The entire Fountain scope is defined under `text.fountain`, allowing savvy users
 
 (Adjust colours to taste or to your theme).
 
-## Planned/Experimental Features
+### Scope List
 
-+ Supporting a version of "Go to Definition/Scope" for the `{{include}}` syntax, allowing Sublime to open included files from within the text.
+| Fountain Syntax  | Scope |
+|------------------|-------|
+| Scene headings   | `entity.name.section`     |
+| Scene numbers    | `entity.name.enum`  |
+| Section headings | `punctuation.definition.heading` |
+| {{macros}} | `meta.preprocessor` |
+| {{includes}} | `keyword.control.import` |
+| Title Page   | `variable.language` |
+| Title Values | `string.unquoted`   |
+| Boneyard Markers | `punctuation.definition.comment` |
+| Boneyard Content | `comment.block` |
+| Boneyard Tags (`@todo`, etc.) | `punctuation.definition.annotation` and `variable.annotation` |
+| Character Names | `string` |
+| Force Characters (`@`, `!`, etc.) | `constant.other` |
+| Bold      | `markup.bold`      |
+| Italics   | `markup.italic`    |
+| Underline | `markup.underline` |
+| Highlight | `markup.quote`     |
+| Synopses  | `comment.line` |
+| Notes | `comment` |
+
+## Project Files
+
+When setting up a writing workspace with Sublime, it may be sensible to set up a custom build.  This plugin comes with a simple set of commands, but you may want to set up specific flags for a particular project so you don't have to use the terminal every time.
+
+Here's an example of a `.sublime-project` file with a custom build for Meander that generates scene numbers, but preserves [[notes]] in the output:
+
+```json
+{
+	"folders":
+	[
+		{
+			"path": ".",
+			"file_exclude_patterns": ["*.sublime-project"]
+		}
+	],
+	"build_systems": [
+		{
+			"name": "Custom Meander",
+			"working_dir": "$project_path",
+			"cmd": ["meander", "$file", "--notes", "-s", "generate"]
+		}
+	]
+}
+```
