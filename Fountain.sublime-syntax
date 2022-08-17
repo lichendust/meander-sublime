@@ -48,17 +48,14 @@ contexts:
           pop: true
 
   action:
-    # @todo should all force chars
-    # be support.constant?
-    # so far "@", "!" are.
     - match: ^!
-      scope: support.constant
+      scope: constant.other
 
   note:
     - match: \[\[\s*(?=\S)
-      scope: comment
+      scope: punctuation.definition.comment.begin
       push:
-        - meta_scope: meta.string
+        - meta_scope: meta.comment
         - include: markup
         - include: at_tags
         - match: '[^\]]'
@@ -66,17 +63,17 @@ contexts:
         - match: $
           pop: true
         - match: \]\]
-          scope: comment
+          scope: punctuation.definition.comment.end
           pop: true
 
   boneyard:
     - match: /\*
-      scope: punctuation.definition.comment
+      scope: punctuation.definition.comment.begin
       push:
         - include: at_tags
         - meta_scope: comment.block
         - match: \*/
-          scope: punctuation.definition.comment
+          scope: punctuation.definition.comment.end
           pop: true
 
   parentheticals:
@@ -94,7 +91,7 @@ contexts:
     # forced
     - match: ^\s*(\@)(.+)$
       captures:
-        1: support.constant
+        1: constant.other
         2: string
       push:
         - include: boneyard
@@ -105,7 +102,7 @@ contexts:
           pop: true
 
     # regular
-    - match: ^\s*[^\d](Ma?c)?[\p{Lu}\p{N}\^\' ]+(\(.*\)+)?$
+    - match: ^\s*[^\d][\p{Lu}\p{N}\^\' ]+(\(.*\)+)?$
       scope: string
       push:
         - include: boneyard
@@ -125,11 +122,12 @@ contexts:
       scope: entity.name.tag # change this
 
   lyrics:
-    - match: ^~.+
-      scope: lyrics # change this
+    - match: ^\s*(~).+?$
+      captures:
+        1: constant.other
 
   sections:
-    - match: ^#+.+$
+    - match: ^\s*#+.+?$
       scope: punctuation.definition.heading
 
   synopses:
@@ -142,18 +140,21 @@ contexts:
 
   pagebreak:
     - match: ===$
-      scope: comment
+      scope: constant.other
 
   at_tags:
-    - match: (?i)@\b(\S+)\b
-      scope: constant.language
+    - match: (?i)(@)\b(\S+)\b
+    - meta_scope: meta.annotation
+      captures:
+        1: punctuation.definition.annotation
+        2: variable.annotation
 
   markup_bold_italic:
     - match: (?<!\\)\*\*\*(?!\s)
       scope: comment
       push:
-        - include: markup_highlight
         - meta_scope: markup.italic
+        - include: markup_highlight
         - match: (?<!\s)\*\*\*
           scope: comment
           pop: true
@@ -164,8 +165,8 @@ contexts:
     - match: (?<!\\)\*\*(?!\s)
       scope: comment
       push:
-        - include: markup_highlight
         - meta_scope: markup.bold
+        - include: markup_highlight
         - match: (?<!\s)\*\*
           scope: comment
           pop: true
@@ -176,8 +177,8 @@ contexts:
     - match: (?<!\\)\*(?!\s)
       scope: comment
       push:
-        - include: markup_highlight
         - meta_scope: markup.italic
+        - include: markup_highlight
         - match: (?<!\s)\*
           scope: comment
           pop: true
@@ -188,8 +189,8 @@ contexts:
     - match: (?<!\\)(_)(?!\s)
       scope: comment
       push:
-        - include: markup_highlight
         - meta_content_scope: markup.underline
+        - include: markup_highlight
         - match: (?<!\s)_
           scope: comment
           pop: true
