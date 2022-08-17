@@ -18,9 +18,9 @@ Meander for Sublime Text is also intended as a reference implementation for how 
 	- [Add Scene Numbers](#add-scene-numbers)
 	- [Remove Scene Numbers](#remove-scene-numbers)
 	- [Toggle Boneyards](#toggle-boneyards)
+- [Project Files](#project-files)
 - [Syntax](#syntax)
 	- [Scope List](#scope-list)
-- [Project Files](#project-files)
 
 <!-- /MarkdownTOC -->
 
@@ -78,6 +78,31 @@ Sublime Command: `meander_toggle_boneyard`
 
 Hides or reveals (by folding) all `/* boneyard */` regions in the current file, useful for visually simplifying an in-progress document dense with notes and reminders.
 
+## Project Files
+
+When setting up a writing workspace with Sublime, it may be sensible to set up a custom build.  This plugin comes with a simple set of commands, but you may want to set up specific flags for a particular project so you don't have to use the terminal every time.
+
+Here's an example of a `.sublime-project` file with a custom build for Meander that generates scene numbers, but preserves [[notes]] in the output:
+
+```json
+{
+	"folders":
+	[
+		{
+			"path": ".",
+			"file_exclude_patterns": ["*.sublime-project"]
+		}
+	],
+	"build_systems": [
+		{
+			"name": "Custom Meander",
+			"working_dir": "$project_path",
+			"cmd": ["meander", "$file", "--notes", "-s", "generate"]
+		}
+	]
+}
+```
+
 ## Syntax
 
 The included syntax definition for Fountain, in addition to the base syntax, supports the additional extensions Meander has either provided or supported from other Fountain editors.
@@ -114,9 +139,6 @@ The parent Fountain scope is `text.fountain`, allowing savvy users to make speci
 | {{includes}} | `keyword.control.import` |
 | Title Page   | `variable.language` |
 | Title Values | `string.unquoted`   |
-| Boneyard Markers | `punctuation.definition.comment` |
-| Boneyard Content | `comment.block` |
-| Boneyard Tags (`@todo`, etc.) | `punctuation.definition.annotation` and `variable.annotation` |
 | Character Names | `string` |
 | Force Characters (`@`, `!`, etc.) | `constant.other` |
 | Bold      | `markup.bold`      |
@@ -124,29 +146,10 @@ The parent Fountain scope is `text.fountain`, allowing savvy users to make speci
 | Underline | `markup.underline` |
 | Highlight | `markup.quote`     |
 | Synopses  | `comment.line` |
+| Note Markers | `punctuation.definition.comment` |
 | Notes | `comment` |
+| Boneyard Markers | `punctuation.definition.comment` |
+| Boneyard Content | `comment.block` |
+| Boneyard Tags[^1] (`@todo`, etc.) | `punctuation.definition.annotation` and `variable.annotation` |
 
-## Project Files
-
-When setting up a writing workspace with Sublime, it may be sensible to set up a custom build.  This plugin comes with a simple set of commands, but you may want to set up specific flags for a particular project so you don't have to use the terminal every time.
-
-Here's an example of a `.sublime-project` file with a custom build for Meander that generates scene numbers, but preserves [[notes]] in the output:
-
-```json
-{
-	"folders":
-	[
-		{
-			"path": ".",
-			"file_exclude_patterns": ["*.sublime-project"]
-		}
-	],
-	"build_systems": [
-		{
-			"name": "Custom Meander",
-			"working_dir": "$project_path",
-			"cmd": ["meander", "$file", "--notes", "-s", "generate"]
-		}
-	]
-}
-```
+[^1]: Boneyard tags are a feature exclusive to this package.  They let you write `@` followed by a word and have it be highlighted, such as `@todo` or `@fixme` inside Boneyards and Notes.  They are purely visual aides for the writing process.
