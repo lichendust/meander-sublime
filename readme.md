@@ -1,10 +1,8 @@
 # Meander for Sublime Text
 
-[Meander](https://github.com/qxoko/meander) is a production writing utility for rendering and analysing screenplays.  While you don't have to have Meander installed to use this plugin, it's recommended to use them in tandem for the full benefit.
+[Meander](https://github.com/qxoko/meander) is a production writing utility for rendering and analysing screenplays.  While you don't have to have Meander installed to use this package, it's recommended to use them in tandem for the full benefit.
 
-This plugin offers a semantically-compatible Fountain syntax definition for use with Meander, as well as number of quality of life features, like an in-text scene number generator and navigation tools tailored to screenplays.
-
-It also provides a simple, customisable and distraction-free experience out of the box for Fountain writing.
+It provides a simple, customisable and distraction-free experience out of the box for Fountain writing, a semantically-compatible Fountain syntax definition for use with Meander, as well as number of quality of life features, like an in-text scene number generator and navigation tools tailored to screenplays.
 
 Meander for Sublime Text is also intended as a reference implementation for how screenwriting with Meander should be supported and facilitated in other text editors.
 
@@ -38,17 +36,24 @@ Move to section adds forward/backward navigation between Scene Headings and Sect
 		"keys": ["f9"],
 		"command": "meander_move_to_section",
 		"args": {
-			"forward": false
+			"forward": false,
+			"include_scenes": true,
 		}
 	},
 	{
 		"keys": ["f10"],
-		"command": "meander_move_to_section"
+		"command": "meander_move_to_section",
+		"args": {
+			"forward": true,
+			"include_scenes": true,
+		}
 	}
 ]
 ```
 
-(Due to this plugin's careful selection of scope names, this feature also works on Markdown files.)
+The `include_scenes` argument will optionally include scene headings in the navigation, but is disabled by default.
+
+(Due to this package's careful selection of scope names, `move_to_section` also works for moving between Markdown headings.)
 
 ### Open Included Files
 
@@ -80,7 +85,7 @@ Hides or reveals (by folding) all `/* boneyard */` regions in the current file, 
 
 ## Project Files
 
-When setting up a writing workspace with Sublime, it may be sensible to set up a custom build.  This plugin comes with a simple set of commands, but you may want to set up specific flags for a particular project so you don't have to use the terminal every time.
+When setting up a writing workspace with Sublime, it may be sensible to set up a custom build.  This package comes with a simple set of commands, but you may want to set up specific flags for a particular project so you don't have to use the terminal every time.
 
 Here's an example of a `.sublime-project` file with a custom build for Meander that generates scene numbers, but preserves [[notes]] in the output:
 
@@ -132,20 +137,20 @@ The parent Fountain scope is `text.fountain`, allowing savvy users to make speci
 
 | Fountain Syntax  | Scope |
 |------------------|-------|
-| Scene headings   | `entity.name.section`     |
-| Scene numbers    | `entity.name.enum`  |
+| Scene headings | `entity.name.section` |
+| Scene numbers | `entity.name.enum` |
 | Section headings | `punctuation.definition.heading` |
 | {{macros}} | `meta.preprocessor` |
 | {{includes}} | `keyword.control.import` |
-| Title Page   | `variable.language` |
-| Title Values | `string.unquoted`   |
+| Title Page | `variable.language` |
+| Title Values | `string.unquoted` |
 | Character Names | `string` |
 | Force Characters (`@`, `!`, etc.) | `constant.other` |
-| Bold      | `markup.bold`      |
-| Italics   | `markup.italic`    |
+| Bold | `markup.bold` |
+| Italics | `markup.italic` |
 | Underline | `markup.underline` |
-| Highlight | `markup.quote`     |
-| Synopses  | `comment.line` |
+| Highlight | `markup.quote` |
+| Synopses | `comment.line` |
 | Note Markers | `punctuation.definition.comment` |
 | Notes | `comment` |
 | Boneyard Markers | `punctuation.definition.comment` |

@@ -6,10 +6,30 @@ file_extensions:
 scope: text.fountain
 
 variables:
-  title_page: '^(?i)\b(format|title|credit|authors?|source|draft date|contact|copyright|notes|revision|top center|top left|top right|center center|bottom left|bottom right|cc|tl|tc|tr|cc|bl|br)\b:'
+  title_page: '^(?i)\b([\w ]+)\b:'
   scene_head: ^(?i)((\.(?!\.)|scene\.|int\.|ext\.|est\.|i/e\.|int\.?/ext\.?|flashback\.)[\p{L}\p{N}/\-—\(\)'\|., ]*)
 
 contexts:
+  main:
+    - include: boneyard
+    - include: title # enforces title page only being at top
+    - match: ^$
+      set: fountain
+
+  fountain:
+    - include: sections
+    - include: scene
+    - include: action
+    - include: note
+    - include: boneyard
+    - include: angled-stuff
+    - include: lyrics
+    - include: pagebreak
+    - include: synopses
+    - include: markup
+    - include: macros
+    - include: characters
+
   title:
     - match: '{{title_page}}'
       captures:
@@ -17,7 +37,7 @@ contexts:
       push:
         - include: boneyard
         - include: markup
-        - meta_content_scope: string.unquoted
+        - include: macros
         - match: ^(?!\s)
           pop: true
         - match: ^$
@@ -31,7 +51,7 @@ contexts:
         1: entity.name.section
         4: entity.name.enum
 
-  highland_special:
+  macros:
     - match: (?i){{
       push:
         - match: \b(include)\b
@@ -57,20 +77,21 @@ contexts:
       push:
         - meta_scope: meta.comment
         - include: markup
-        - include: at_tags
-        - match: '[^\]]'
-          scope: comment
         - match: $
           pop: true
         - match: \]\]
           scope: punctuation.definition.comment.end
           pop: true
+        - include: at-tags
+        - match: .+?
+          scope: comment
 
   boneyard:
     - match: /\*
       scope: punctuation.definition.comment.begin
       push:
-        - include: at_tags
+        - include: gender-headings
+        - include: at-tags
         - meta_scope: comment.block
         - match: \*/
           scope: punctuation.definition.comment.end
@@ -88,38 +109,37 @@ contexts:
           pop: true
 
   characters:
-    # forced
-    - match: ^\s*(\@)(.+)$
+    - match: ^\s*(\@)(.+?)$
       captures:
         1: constant.other
         2: string
-      push:
-        - include: boneyard
-        - include: parentheticals
-        - include: markup
-        - include: note
-        - match: ^$
-          pop: true
-
-    # regular
-    - match: ^\s*[^\d][\p{Lu}\p{N}\^\' ]+(\(.*\)+)?$
+    - match: ^\s*[^a-z]+$
       scope: string
-      push:
-        - include: boneyard
-        - include: parentheticals
-        - include: markup
-        - include: note
-        - match: ^$
-          pop: true
 
-  # @todo markup support here
+  angled-stuff:
+    - match: (?i)^\s*.+to:$
+      scope: keyword.control
+    - match: ^\s*\>
+      pop: true
+      branch_point: angled-restart
+      branch:
+        - transition
+        - centered
+
   centered:
-    - match: ^\s*\>.+\<$
-      scope: centered
+    - include: markup
+    - match: $
+      pop: true
 
   transition:
-    - match: (?i)^\s*.+to:$|^\s*\>.+$
-      scope: entity.name.tag # change this
+    - match: \<\s*$ # oops we're centered
+      fail: angled-restart
+    - match: \>
+      scope: keyword.control
+    - match: \w+
+      scope: keyword.control
+    - match: $
+      pop: true
 
   lyrics:
     - match: ^\s*(~).+?$
@@ -142,87 +162,73 @@ contexts:
     - match: ===$
       scope: constant.other
 
-  at_tags:
+  at-tags:
     - match: (?i)(@)\b(\S+)\b
     - meta_scope: meta.annotation
       captures:
         1: punctuation.definition.annotation
         2: variable.annotation
 
-  markup_bold_italic:
-    - match: (?<!\\)\*\*\*(?!\s)
-      scope: comment
-      push:
-        - meta_scope: markup.italic
-        - include: markup_highlight
-        - match: (?<!\s)\*\*\*
-          scope: comment
-          pop: true
-        - match: ^$
-          pop: true
-
-  markup_bold:
+  markup-bold:
     - match: (?<!\\)\*\*(?!\s)
       scope: comment
       push:
-        - meta_scope: markup.bold
-        - include: markup_highlight
+        - include: markup-italic
+        - include: markup-highlight
         - match: (?<!\s)\*\*
           scope: comment
           pop: true
-        - match: ^$
+        - match: $
           pop: true
+        - match: .+?
+          scope: markup.bold
 
-  markup_italic:
+  markup-italic:
     - match: (?<!\\)\*(?!\s)
       scope: comment
       push:
-        - meta_scope: markup.italic
-        - include: markup_highlight
+        - include: markup-bold
+        - include: markup-highlight
         - match: (?<!\s)\*
           scope: comment
           pop: true
-        - match: ^$
+        - match: $
           pop: true
+        - match: .+?
+          scope: markup.italic
 
-  markup_underline:
+  markup-underline:
     - match: (?<!\\)(_)(?!\s)
       scope: comment
       push:
-        - meta_content_scope: markup.underline
-        - include: markup_highlight
+        - include: markup-highlight
         - match: (?<!\s)_
           scope: comment
           pop: true
-        - match: ^$
+        - match: $
           pop: true
+        - match: .+?
+          scope: markup.underline
 
-  markup_highlight:
-    - match: (?<!\\)(\+)(?!\s)(.+?)(?<!\s)(\+)
-      captures:
-        1: comment
-        2: markup.quote
-        3: comment
+  markup-highlight:
+    - match: (?<!\\)(\+)(?!\s)
+      scope: comment
+      push:
+        - match: (?<!\s)(\+)
+          scope: comment
+          pop: true
+        - match: $
+          pop: true
+        - match: .+?
+          scope: markup.quote
 
   markup:
-    - include: markup_bold_italic
-    - include: markup_bold
-    - include: markup_italic
-    - include: markup_underline
-    - include: markup_highlight
+    - include: markup-italic
+    - include: markup-bold
+    - include: markup-underline
+    - include: markup-highlight
 
-  main:
-    - include: title
-    - include: sections
-    - include: scene
-    - include: action
-    - include: note
-    - include: boneyard
-    - include: characters
-    - include: centered
-    - include: transition
-    - include: lyrics
-    - include: pagebreak
-    - include: synopses
-    - include: markup
-    - include: highland_special
+  gender-headings:
+    - match: \[gender\.(.+?)\]
+      captures:
+        1: variable.parameter

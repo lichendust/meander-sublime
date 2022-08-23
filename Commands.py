@@ -55,13 +55,16 @@ class meander_open_include(sublime_plugin.TextCommand):
 			sublime.active_window().open_file(target_file)
 
 class meander_move_to_section(sublime_plugin.TextCommand):
-	def run(self, edit, forward=True):
+	def run(self, edit, forward=True, include_scenes=False):
 		# gets list of caret positions
 		selections = self.view.sel()
 		cursor_pos = selections[0] # first one
 
+		section_scope = 'punctuation.definition.heading'
+		all_scope     = 'punctuation.definition.heading, entity.name.section'
+
 		# get all sections
-		section_list = self.view.find_by_selector('punctuation.definition.heading, entity.name.section')
+		section_list = self.view.find_by_selector(all_scope if include_scenes else section_scope)
 
 		# new target position
 		the_point = 0
