@@ -1,10 +1,12 @@
 # Meander for Sublime Text
 
+Meander for Sublime Text provides a simple, customisable and distraction-free experience out of the box for Fountain writing, a semantically-compatible Fountain syntax definition for use with Meander, as well as number of quality of life features, like an in-text scene number generator and navigation tools tailored to screenplays.
+
 [Meander](https://github.com/qxoko/meander) is a production writing utility for rendering and analysing screenplays.  While you don't have to have Meander installed to use this package, it's recommended to use them in tandem for the full benefit.
 
-It provides a simple, customisable and distraction-free experience out of the box for Fountain writing, a semantically-compatible Fountain syntax definition for use with Meander, as well as number of quality of life features, like an in-text scene number generator and navigation tools tailored to screenplays.
-
 Meander for Sublime Text is also intended as a reference implementation for how screenwriting with Meander should be supported and facilitated in other text editors.
+
+This document will make reference to Fountain syntax and Meander features without necessarily explaining them in depth.  It is recommended to read about [Fountain and Meander here](https://github.com/qxoko/meander) first.
 
 ## Table of Contents
 
@@ -12,6 +14,7 @@ Meander for Sublime Text is also intended as a reference implementation for how 
 
 - [Commands](#commands)
 	- [Move to Section](#move-to-section)
+	- [Move to Note Tag](#move-to-note-tag)
 	- [Open Included Files](#open-included-files)
 	- [Add Scene Numbers](#add-scene-numbers)
 	- [Remove Scene Numbers](#remove-scene-numbers)
@@ -51,17 +54,50 @@ Move to section adds forward/backward navigation between Scene Headings and Sect
 ]
 ```
 
-The `include_scenes` argument will optionally include scene headings in the navigation, but is disabled by default.
+The `include_scenes` argument will optionally add scene headings as navigable targets, but is disabled by default.
+
+This also allows the same command to be useful for both screenwriters with their scene headings and authors using Meander's manuscript mode, where sections are used as chapter headings.
 
 (Due to this package's careful selection of scope names, `move_to_section` also works for moving between Markdown headings.)
+
+### Move to Note Tag
+
+Sublime Command: `meander_move_to_note_tag`
+
+A note tag is a word, prefixed with an `@` symbol inside a note or boneyard, such as `@todo` or `@fixthis`.  They do not exist in Fountain or Meander and are only present in this syntax package as a helpful visual aide to help information stand out in a long boneyard or anchor a note:
+
+```fountain
+[[@todo this whole passage is lacking clarity]]
+```
+
+Move to note tag adds forward/backward navigation between tags in boneyards and notes, facilitating quick navigation to your most important notes:
+
+```json
+[
+	{
+		"keys": ["f9"],
+		"command": "meander_move_to_note_tag",
+		"args": {
+			"forward": false,
+		}
+	},
+	{
+		"keys": ["f10"],
+		"command": "meander_move_to_note_tag",
+		"args": {
+			"forward": true,
+		}
+	}
+]
+```
 
 ### Open Included Files
 
 Sublime Command: `meander_open_include`
 
-"Open Include" is a drop-in replacement for Sublime's "Goto Definition" that allows the user to open the file path of an `{{include}}` from its reference in the text.
+"Open Include" is a drop-in replacement for Sublime's "Goto Definition" that allows the user to open the file path of an `{{include}}` from its reference in the text by placing the caret within it.
 
-This is enabled by default within the package, using F12, which idiomatically replaces the default "Goto Definition" shortcut.
+This is enabled by default within the package using F12, which idiomatically replaces the default "Goto Definition" shortcut.
 
 ### Add Scene Numbers
 
@@ -85,9 +121,9 @@ Hides or reveals (by folding) all `/* boneyard */` regions in the current file, 
 
 ## Project Files
 
-When setting up a writing workspace with Sublime, it may be sensible to set up a custom build.  This package comes with a simple set of commands, but you may want to set up specific flags for a particular project so you don't have to use the terminal every time.
+When setting up a writing workspace with Sublime, it may be sensible to set up a custom build.  This package comes with a build system featuring a few simple presets for Meander, but you may want to set up specific flags for a particular project so you don't have to use the terminal every time.
 
-Here's an example of a `.sublime-project` file with a custom build for Meander that generates scene numbers, but preserves [[notes]] in the output:
+Here's an example of a `.sublime-project` file with a custom build for Meander that generates scene numbers, but preserves `[[notes]]` in the output:
 
 ```json
 {
@@ -155,6 +191,4 @@ The parent Fountain scope is `text.fountain`, allowing savvy users to make speci
 | Notes | `comment` |
 | Boneyard Markers | `punctuation.definition.comment` |
 | Boneyard Content | `comment.block` |
-| Boneyard Tags[^1] (`@todo`, etc.) | `punctuation.definition.annotation` and `variable.annotation` |
-
-[^1]: Boneyard tags are a feature exclusive to this package.  They let you write `@` followed by a word and have it be highlighted, such as `@todo` or `@fixme` inside Boneyards and Notes.  They are purely visual aides for the writing process.
+| Boneyard Tags (`@todo`, etc.) | `variable.annotation` |
