@@ -75,14 +75,13 @@ contexts:
     - match: \[\[\s*(?=\S)
       scope: punctuation.definition.comment.begin
       push:
-        - meta_scope: meta.comment
+        - include: at-tags
         - include: markup
         - match: $
           pop: true
         - match: \]\]
           scope: punctuation.definition.comment.end
           pop: true
-        - include: at-tags
         - match: .+?
           scope: comment
 
@@ -92,10 +91,11 @@ contexts:
       push:
         - include: gender-headings
         - include: at-tags
-        - meta_scope: comment.block
         - match: \*/
           scope: punctuation.definition.comment.end
           pop: true
+        - match: .+?
+          scope: comment.block
 
   parentheticals:
     - match: ^\s*\(
@@ -163,11 +163,8 @@ contexts:
       scope: constant.other
 
   at-tags:
-    - match: (?i)(@)\b(\S+)\b
-    - meta_scope: meta.annotation
-      captures:
-        1: punctuation.definition.annotation
-        2: variable.annotation
+    - match: (?i)(@\b\S+\b)
+      scope: variable.annotation
 
   markup-bold:
     - match: (?<!\\)\*\*(?!\s)
@@ -231,4 +228,5 @@ contexts:
   gender-headings:
     - match: \[gender\.(.+?)\]
       captures:
+        0: comment
         1: variable.parameter
