@@ -107,6 +107,6 @@ class meander_move_to_section(sublime_plugin.TextCommand):
 
 		move_to_region(self.view, all_scope if include_scenes else section_scope, forward)
 
-class meander_move_to_note(sublime_plugin.TextCommand):
+class meander_move_to_tag(sublime_plugin.TextCommand):
 	def run(self, edit, forward=True):
-		move_to_region(self.view, 'comment', forward)
+		move_to_region(self.view, 'variable.annotation', forward)
