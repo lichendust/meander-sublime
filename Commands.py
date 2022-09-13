@@ -54,52 +54,59 @@ class meander_open_include(sublime_plugin.TextCommand):
 			target_file = os.path.join(os.path.dirname(self.view.file_name()), self.view.substr(region))
 			sublime.active_window().open_file(target_file)
 
+def move_to_region(view, scope, forward=True):
+	# gets list of caret positions
+	selections = view.sel()
+	cursor_pos = selections[0] # first one
+
+	# get all matching scope regions
+	section_list = view.find_by_selector(scope)
+
+	# new target position
+	the_point = 0
+
+	for i, region in enumerate(section_list):
+		# if we're in a section presently, adjust accordingly
+		if region.contains(cursor_pos) or region.end() == cursor_pos.end():
+			if forward and len(section_list) - 1 > i:
+				the_point = section_list[i + 1].end()
+				break
+
+			if not forward and i > 0:
+				the_point = section_list[i - 1].end()
+				break
+
+		# if we're between sections, adjust accordingly
+		if region.begin() > cursor_pos.begin() and region.end() > cursor_pos.end():
+			if not forward and i > 0:
+				the_point = section_list[i - 1].end()
+				break
+
+			the_point = region.end()
+			break
+	# end loop
+
+	# if we didn't find anything, we need to do nothing at
+	# the top of the file and go to the last entry if we're
+	# at the bottom
+	if the_point == 0:
+		if forward:
+			return
+		else:
+			the_point = section_list[len(section_list) - 1].end()
+
+	# moves caret position and viewport
+	selections.clear()
+	selections.add(the_point)
+	view.show_at_center(the_point) # animate is on
+
 class meander_move_to_section(sublime_plugin.TextCommand):
 	def run(self, edit, forward=True, include_scenes=False):
-		# gets list of caret positions
-		selections = self.view.sel()
-		cursor_pos = selections[0] # first one
-
 		section_scope = 'punctuation.definition.heading'
 		all_scope     = 'punctuation.definition.heading, entity.name.section'
 
-		# get all sections
-		section_list = self.view.find_by_selector(all_scope if include_scenes else section_scope)
+		move_to_region(self.view, all_scope if include_scenes else section_scope, forward)
 
-		# new target position
-		the_point = 0
-
-		for i, region in enumerate(section_list):
-			# if we're in a section presently, adjust accordingly
-			if region.contains(cursor_pos) or region.end() == cursor_pos.end():
-				if forward and len(section_list) - 1 > i:
-					the_point = section_list[i + 1].end()
-					break
-
-				if not forward and i > 0:
-					the_point = section_list[i - 1].end()
-					break
-
-			# if we're between sections, adjust accordingly
-			if region.begin() > cursor_pos.begin() and region.end() > cursor_pos.end():
-				if not forward and i > 0:
-					the_point = section_list[i - 1].end()
-					break
-
-				the_point = region.end()
-				break
-		# end loop
-
-		# if we didn't find anything, we need to do nothing at
-		# the top of the file and go to the last entry if we're
-		# at the bottom
-		if the_point == 0:
-			if forward:
-				return
-			else:
-				the_point = section_list[len(section_list) - 1].end()
-
-		# moves caret position and viewport
-		selections.clear()
-		selections.add(the_point)
-		self.view.show_at_center(the_point) # animate is on
+class meander_move_to_note(sublime_plugin.TextCommand):
+	def run(self, edit, forward=True):
+		move_to_region(self.view, 'comment', forward)
