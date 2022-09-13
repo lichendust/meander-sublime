@@ -56,7 +56,7 @@ Move to section adds forward/backward navigation between Scene Headings and Sect
 
 The `include_scenes` argument will optionally add scene headings as navigable targets, but is disabled by default.
 
-This also allows the same command to be useful for both screenwriters with their scene headings and authors using Meander's manuscript mode, where sections are used as chapter headings.
+This also allows the same command to be useful for both screenwriters with their Scene Headings and authors using Meander's manuscript mode, where Sections are used as chapter headings.
 
 (Due to this package's careful selection of scope names, `move_to_section` also works for moving between Markdown headings.)
 
@@ -64,26 +64,26 @@ This also allows the same command to be useful for both screenwriters with their
 
 Sublime Command: `meander_move_to_note_tag`
 
-A note tag is a word, prefixed with an `@` symbol inside a note or boneyard, such as `@todo` or `@fixthis`.  They do not exist in Fountain or Meander and are only present in this syntax package as a helpful visual aide to help information stand out in a long boneyard or anchor a note:
+A note tag is a word, prefixed with an `@` symbol inside a Note or Boneyard, such as `@todo` or `@fixthis`.  They do not exist in Fountain or Meander and are only present in this syntax package as a helpful visual aide to help important reminders stand out:
 
 ```fountain
 [[@todo this whole passage is lacking clarity]]
 ```
 
-Move to note tag adds forward/backward navigation between tags in boneyards and notes, facilitating quick navigation to your most important notes:
+This command adds forward/backward navigation between these tags, facilitating quick navigation between all the items in your writing to-do list:
 
 ```json
 [
 	{
 		"keys": ["f9"],
-		"command": "meander_move_to_note_tag",
+		"command": "meander_move_to_tag",
 		"args": {
 			"forward": false,
 		}
 	},
 	{
 		"keys": ["f10"],
-		"command": "meander_move_to_note_tag",
+		"command": "meander_move_to_tag",
 		"args": {
 			"forward": true,
 		}
@@ -97,7 +97,7 @@ Sublime Command: `meander_open_include`
 
 "Open Include" is a drop-in replacement for Sublime's "Goto Definition" that allows the user to open the file path of an `{{include}}` from its reference in the text by placing the caret within it.
 
-This is enabled by default within the package using F12, which idiomatically replaces the default "Goto Definition" shortcut.
+This is enabled by default within the package using F12, which idiomatically replaces the default "Goto Definition" shortcut when used within a Fountain file.
 
 ### Add Scene Numbers
 
