@@ -22,6 +22,8 @@ This document will make reference to Fountain syntax and Meander features withou
 - [Project Files](#project-files)
 - [Syntax](#syntax)
 	- [Scope List](#scope-list)
+- [Recommended Packages / Tweaks](#recommended-packages--tweaks)
+	- [Theme Colours](#theme-colours)
 
 <!-- /MarkdownTOC -->
 
@@ -56,15 +58,13 @@ Move to section adds forward/backward navigation between Scene Headings and Sect
 
 The `include_scenes` argument will optionally add scene headings as navigable targets, but is disabled by default.
 
-This also allows the same command to be useful for both screenwriters with their Scene Headings and authors using Meander's manuscript mode, where Sections are used as chapter headings.
-
-(Due to this package's careful selection of scope names, `move_to_section` also works for moving between Markdown headings.)
+This scene switch allows the same command to be useful for both screenwriters with their Scene Headings and authors using Meander's manuscript mode, where Sections are used as chapter headings.
 
 ### Move to Note Tag
 
 Sublime Command: `meander_move_to_note_tag`
 
-A note tag is a word, prefixed with an `@` symbol inside a Note or Boneyard, such as `@todo` or `@fixthis`.  They do not exist in Fountain or Meander and are only present in this syntax package as a helpful visual aide to help important reminders stand out:
+A note tag is a word, prefixed with an `@` symbol inside a Note or Boneyard, such as `@todo` or `@fixthis`.  They are not recognised by Fountain or Meander and are only present in this syntax package as a helpful visual aide to help important reminders stand out:
 
 ```fountain
 [[@todo this whole passage is lacking clarity]]
@@ -95,9 +95,9 @@ This command adds forward/backward navigation between these tags, facilitating q
 
 Sublime Command: `meander_open_include`
 
-"Open Include" is a drop-in replacement for Sublime's "Goto Definition" that allows the user to open the file path of an `{{include}}` from its reference in the text by placing the caret within it.
+"Open Include" is a drop-in replacement for Sublime's "Goto Definition" that allows the user to open the file path of an `{{include}}` with a shortcut.
 
-This is enabled by default within the package using F12, which idiomatically replaces the default "Goto Definition" shortcut when used within a Fountain file.
+This is *enabled* by default within the package using F12, which idiomatically replaces the default "Goto Definition" shortcut when used within a Fountain file.
 
 ### Add Scene Numbers
 
@@ -117,7 +117,7 @@ Strips out any `#1#` scene numbers from the current file.  The removal command w
 
 Sublime Command: `meander_toggle_boneyard`
 
-Hides or reveals (by folding) all `/* boneyard */` regions in the current file, useful for visually simplifying an in-progress document dense with notes and reminders.
+Toggles (by folding) all `/* boneyard */` regions in the current file, useful for visually simplifying an in-progress document dense with notes and reminders.
 
 ## Project Files
 
@@ -150,25 +150,6 @@ The included syntax definition for Fountain, in addition to the base syntax, sup
 
 The scope names are carefully selected to match other markup languages and use Sublime's own [Scope Naming](https://www.sublimetext.com/docs/scope_naming.html) recommendations where possible to ensure most themes will look sensible out of the box.
 
-The parent Fountain scope is `text.fountain`, allowing savvy users to make specific tweaks to their themes for better support.  Here's one I use personally, which inverts scene headings (and scene numbers) to make them extremely visible:
-
-```json
-{
-	"scope": "text.fountain entity.name.section",
-	"foreground": "black",
-	"background": "white",
-	"selection_foreground": "white",
-},
-{
-	"scope": "text.fountain entity.name.enum",
-	"foreground": "black",
-	"background": "purple",
-	"selection_foreground": "white",
-},
-```
-
-(Adjust colours to taste or to your theme).
-
 ### Scope List
 
 | Fountain Syntax  | Scope |
@@ -192,3 +173,31 @@ The parent Fountain scope is `text.fountain`, allowing savvy users to make speci
 | Boneyard Markers | `punctuation.definition.comment` |
 | Boneyard Content | `comment.block` |
 | Boneyard Tags (`@todo`, etc.) | `variable.annotation` |
+
+## Recommended Packages / Tweaks
+
+In addition to the Meander package, I recommend the following packages for a minimal, distractionless Sublime writing experience:
+
+- The [Alabaster Theme](https://github.com/tonsky/sublime-scheme-alabaster) for an extremely clean light-mode that works very well with Fountain.
+- The [Typewriter](https://github.com/alehandrof/Typewriter) package, which provides a typewriter-scroll mode that locks the scrolling position to the caret as you type.
+
+### Theme Colours
+
+Using the parent Fountain scope `text.fountain`, specific theme tweaks can be made for better customisation.
+
+Here's one I use personally, which inverts scene headings (and scene numbers) to make them extremely visible:
+
+```json
+{
+	"scope": "text.fountain entity.name.section",
+	"foreground": "black",
+	"background": "white",
+	"selection_foreground": "white",
+},
+{
+	"scope": "text.fountain entity.name.enum",
+	"foreground": "black",
+	"background": "purple",
+	"selection_foreground": "white",
+},
+```

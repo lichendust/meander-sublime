@@ -91,11 +91,10 @@ contexts:
       push:
         - include: gender-headings
         - include: at-tags
+        - meta_scope: comment.block
         - match: \*/
           scope: punctuation.definition.comment.end
           pop: true
-        - match: .+?
-          scope: comment.block
 
   parentheticals:
     - match: ^\s*\(
