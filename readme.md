@@ -1,12 +1,12 @@
 # Meander for Sublime Text
 
-Meander for Sublime Text provides a simple, customisable and distraction-free experience out of the box for Fountain writing, a semantically-compatible Fountain syntax definition for use with Meander, as well as number of quality of life features, like an in-text scene number generator and navigation tools tailored to screenplays.
-
 [Meander](https://github.com/qxoko/meander) is a production writing utility for rendering and analysing screenplays.  While you don't have to have Meander installed to use this package, it's recommended to use them in tandem for the full benefit.
 
-Meander for Sublime Text is also intended as a reference implementation for how screenwriting with Meander should be supported and facilitated in other text editors.
+Meander for Sublime Text provides a simple, customisable and distraction-free experience out of the box for Fountain writing, a semantically-compatible Fountain syntax definition for use with Meander, as well as number of quality of life features, like an in-text scene number generator and navigation tools tailored to screenplays.
 
-This document will make reference to Fountain syntax and Meander features without necessarily explaining them in depth.  It is recommended to read about [Fountain and Meander here](https://github.com/qxoko/meander) first.
+This package is also intended as a reference implementation for how screenwriting with Meander should be supported and facilitated in other text editors.
+
+This document will make reference to Fountain syntax and Meander features without necessarily explaining them in depth.  If you're unfamiliar with Fountain, please read about [Fountain](https://fountain.io/syntax) and [Meander](https://github.com/qxoko/meander) first.
 
 ## Table of Contents
 
