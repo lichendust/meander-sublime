@@ -51,7 +51,7 @@ class meander_open_include(sublime_plugin.TextCommand):
 		if self.view.scope_name(cursor_pos.begin()) == "text.fountain include ":
 			# create a valid path and open it!
 			region = self.view.extract_scope(cursor_pos.begin())
-			target_file = os.path.join(os.path.dirname(self.view.file_name()), self.view.substr(region))
+			target_file = os.path.join(os.path.dirname(self.view.file_name()), self.view.substr(region).strip())
 			sublime.active_window().open_file(target_file)
 
 def move_to_region(view, scope, forward=True):

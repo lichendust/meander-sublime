@@ -2,7 +2,9 @@
 ---
 file_extensions:
   - fountain
+hidden_file_extensions:
   - ftn
+first_line_match: '^(?i)\b(title|format)\b:'
 scope: text.fountain
 
 variables:
@@ -17,6 +19,7 @@ contexts:
       set: fountain
 
   fountain:
+    - include: vars
     - include: sections
     - include: scene
     - include: action
@@ -33,8 +36,10 @@ contexts:
   title:
     - match: '{{title_page}}'
       captures:
-        1: variable.language
+        1: variable.language.fountain
       push:
+        - include: vars
+        - include: note
         - include: boneyard
         - include: markup
         - include: macros
@@ -45,64 +50,60 @@ contexts:
 
   scene:
     - match: '{{scene_head}}$'
-      scope: entity.name.section
+      scope: entity.name.section.fountain
     - match: '{{scene_head}}( )(\#.*\#)$'
       captures:
-        1: entity.name.section
-        4: entity.name.enum
+        1: entity.name.section.fountain
+        4: entity.name.enum.fountain
 
   macros:
-    - match: (?i){{
-      push:
-        - match: \b(include)\b
-          scope: keyword.control.import
-          push:
-            - match: ':'
-            - match: '[\w/\\\.]+'
-              scope: include # this is a made up scope
-            - match: '}}'
-              pop: 2
-        - match: \b(timestamp|header|footer|series|chapter|panel|figure|watermark)\b
-          scope: meta.preprocessor
-        - match: '}}'
-          pop: true
+    - match: "(?i)^(include):(.+?)$"
+      captures:
+        1: keyword.control.import.fountain
+        2: include
+    - match: "(?i)^(header|footer):(.+?)$"
+      captures:
+        1: keyword.control.fountain
+    # - match: "(?i)^(&)(.+?$)"
+      # captures:
+        # 1: keyword.control.import.fountain
+        # 2: include
 
   action:
     - match: ^!
-      scope: constant.other
+      scope: constant.other.fountain
 
   note:
     - match: \[\[\s*(?=\S)
       scope: punctuation.definition.comment.begin
       push:
+        - include: vars
         - include: at-tags
-        - include: markup
+        - meta_scope: comment.fountain
         - match: $
           pop: true
         - match: \]\]
-          scope: punctuation.definition.comment.end
+          scope: punctuation.definition.comment.end.fountain
           pop: true
-        - match: .+?
-          scope: comment
 
   boneyard:
     - match: /\*
-      scope: punctuation.definition.comment.begin
+      scope: punctuation.definition.comment.begin.fountain
       push:
         - include: gender-headings
         - include: at-tags
-        - meta_scope: comment.block
+        - meta_scope: comment.block.fountain
         - match: \*/
-          scope: punctuation.definition.comment.end
+          scope: punctuation.definition.comment.end.fountain
           pop: true
 
   parentheticals:
     - match: ^\s*\(
-      scope: punctuation.section.parens.begin
+      scope: punctuation.section.parens.begin.fountain
       push:
-        - meta_scope: meta.parens
+        - meta_scope: meta.parens.fountain
         - match: \)
-          scope: punctuation.section.parens.end
+          scope: punctuation.section.parens.end.fountain
           pop: true
         - match: ^$
           pop: true
@@ -110,14 +111,14 @@ contexts:
   characters:
     - match: ^\s*(\@)(.+?)$
       captures:
-        1: constant.other
-        2: string
+        1: constant.other.fountain
+        2: string.fountain
     - match: ^\s*[^a-z]+$
-      scope: string
+      scope: string.fountain
 
   angled-stuff:
     - match: (?i)^\s*.+to:$
-      scope: keyword.control
+      scope: keyword.control.fountain
     - match: ^\s*\>
       pop: true
       branch_point: angled-restart
@@ -126,6 +127,7 @@ contexts:
         - centered
 
   centered:
+    - include: vars
     - include: markup
     - match: $
       pop: true
@@ -134,64 +136,77 @@ contexts:
     - match: \<\s*$ # oops we're centered
       fail: angled-restart
     - match: \>
-      scope: keyword.control
+      scope: keyword.control.fountain
     - match: \w+
-      scope: keyword.control
+      scope: keyword.control.fountain
     - match: $
       pop: true
 
   lyrics:
     - match: ^\s*(~).+?$
       captures:
-        1: constant.other
+        1: constant.other.fountain
 
   sections:
-    - match: ^\s*#+.+?$
-      scope: punctuation.definition.heading
+    - match: ^\s*#+\s
+      scope: punctuation.definition.heading.fountain
+      push:
+        - include: vars
+        - meta_scope: punctuation.definition.heading.fountain
+        - include: note
+        - match: $
+          pop: true
 
   synopses:
     - match: ^\s*=
-      scope: punctuation.definition.comment
+      scope: punctuation.definition.comment.fountain
       push:
-        - meta_scope: comment.line
+        - include: vars
+        - meta_scope: comment.line.fountain
         - match: $
           pop: true
 
   pagebreak:
     - match: ===$
-      scope: constant.other
+      scope: constant.other.fountain
+
+  vars:
+    - match: (?i)(#\b\S+\b)
+      scope: variable.control.fountain
+    - match: (?i)(\$\b(title|author|source|notes|draft_?date|copyright|revision|contact|info|date)\b)
+      scope: variable.control.fountain
 
   at-tags:
     - match: (?i)(@\b\S+\b)
-      scope: variable.annotation
+      scope: variable.annotation.fountain
 
   markup-bold:
     - match: (?<!\\)\*\*(?!\s)
-      scope: comment
+      scope: comment.fountain
       push:
         - include: markup-italic
         - include: markup-highlight
         - match: (?<!\s)\*\*
-          scope: comment
+          scope: comment.fountain
           pop: true
         - match: $
           pop: true
         - match: .+?
-          scope: markup.bold
+          scope: markup.bold.fountain
 
   markup-italic:
     - match: (?<!\\)\*(?!\s)
-      scope: comment
+      scope: comment.fountain
       push:
         - include: markup-bold
         - include: markup-highlight
         - match: (?<!\s)\*
-          scope: comment
+          scope: comment.fountain
           pop: true
         - match: $
           pop: true
         - match: .+?
-          scope: markup.italic
+          scope: markup.italic.fountain
 
   markup-underline:
     - match: (?<!\\)(_)(?!\s)
@@ -199,24 +214,24 @@ contexts:
       push:
         - include: markup-highlight
         - match: (?<!\s)_
-          scope: comment
+          scope: comment.fountain
           pop: true
         - match: $
           pop: true
         - match: .+?
-          scope: markup.underline
+          scope: markup.underline.fountain
 
   markup-highlight:
     - match: (?<!\\)(\+)(?!\s)
-      scope: comment
+      scope: comment.fountain
       push:
         - match: (?<!\s)(\+)
-          scope: comment
+          scope: comment.fountain
           pop: true
         - match: $
           pop: true
         - match: .+?
-          scope: markup.quote
+          scope: markup.quote.fountain
 
   markup:
     - include: markup-italic
@@ -227,5 +242,5 @@ contexts:
   gender-headings:
     - match: \[gender\.(.+?)\]
       captures:
-        0: comment
-        1: variable.parameter
+        0: comment.fountain
+        1: variable.parameter.fountain

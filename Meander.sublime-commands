@@ -14,6 +14,10 @@
 		}
 	},
 	{
+		"caption": "Meander: List Notes",
+		"command": "meander_list_notes"
+	},
+	{
 		"caption": "Meander: Add Scene Numbers",
 		"command": "meander_add_scene_number"
 	},
