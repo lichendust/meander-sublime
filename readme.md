@@ -95,7 +95,7 @@ This command adds forward/backward navigation between these tags, facilitating q
 
 Sublime Command: `meander_open_include`
 
-"Open Include" is a drop-in replacement for Sublime's "Goto Definition" that allows the user to open the file path of an `{{include}}` with a shortcut.
+"Open Include" is a drop-in replacement for Sublime's "Goto Definition" that allows the user to open the file path of an `include` with a shortcut.
 
 This is *enabled* by default within the package using F12, which idiomatically replaces the default "Goto Definition" shortcut when used within a Fountain file.
 
@@ -157,8 +157,8 @@ The scope names are carefully selected to match other markup languages and use S
 | Scene headings | `entity.name.section` |
 | Scene numbers | `entity.name.enum` |
 | Section headings | `punctuation.definition.heading` |
-| {{macros}} | `meta.preprocessor` |
-| {{includes}} | `keyword.control.import` |
+| `header`/`footer` | `keyword.control` |
+| `include` | `keyword.control.import` |
 | Title Page | `variable.language` |
 | Title Values | `string.unquoted` |
 | Character Names | `string` |
@@ -170,6 +170,7 @@ The scope names are carefully selected to match other markup languages and use S
 | Synopses | `comment.line` |
 | Note Markers | `punctuation.definition.comment` |
 | Notes | `comment` |
+| Counters | `variable.control.fountain` |
 | Boneyard Markers | `punctuation.definition.comment` |
 | Boneyard Content | `comment.block` |
 | Boneyard Tags (`@todo`, etc.) | `variable.annotation` |
