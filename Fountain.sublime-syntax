@@ -42,7 +42,6 @@ contexts:
         - include: note
         - include: boneyard
         - include: markup
-        - include: macros
         - match: ^(?!\s)
           pop: true
         - match: ^$
