@@ -19,7 +19,6 @@ contexts:
       set: fountain
 
   fountain:
-    - include: vars
     - include: sections
     - include: scene
     - include: action
@@ -32,6 +31,7 @@ contexts:
     - include: markup
     - include: macros
     - include: characters
+    - include: vars
 
   title:
     - match: '{{title_page}}'
@@ -171,9 +171,11 @@ contexts:
 
   vars:
     - match: (?i)(#\b\S+\b)
-      scope: variable.control.fountain
+      scope: constant.numeric.fountain
     - match: (?i)(\$\b(title|author|source|notes|draft_?date|copyright|revision|contact|info|date)\b)
-      scope: variable.control.fountain
+      scope: constant.other.placeholder.fountain
+    - match: (?i)(@\b[\w_]+\b)
+      scope: constant.language.fountain
 
   at-tags:
     - match: (?i)(@\b\S+\b)
@@ -181,12 +183,12 @@ contexts:
 
   markup-bold:
     - match: (?<!\\)\*\*(?!\s)
-      scope: comment.fountain
+      scope: punctuation.definition.bold.begin.fountain
       push:
         - include: markup-italic
         - include: markup-highlight
         - match: (?<!\s)\*\*
-          scope: comment.fountain
+          scope: punctuation.definition.bold.end.fountain
           pop: true
         - match: $
           pop: true
@@ -195,12 +197,12 @@ contexts:
 
   markup-italic:
     - match: (?<!\\)\*(?!\s)
-      scope: comment.fountain
+      scope: punctuation.definition.italic.begin.fountain
       push:
         - include: markup-bold
         - include: markup-highlight
         - match: (?<!\s)\*
-          scope: comment.fountain
+          scope: punctuation.definition.italic.end.fountain
           pop: true
         - match: $
           pop: true
@@ -209,11 +211,11 @@ contexts:
 
   markup-underline:
     - match: (?<!\\)(_)(?!\s)
-      scope: comment
+      scope: punctuation.definition.underline.begin.fountain
       push:
         - include: markup-highlight
         - match: (?<!\s)_
-          scope: comment.fountain
+          scope: punctuation.definition.underline.end.fountain
           pop: true
         - match: $
           pop: true
@@ -222,10 +224,10 @@ contexts:
 
   markup-highlight:
     - match: (?<!\\)(\+)(?!\s)
-      scope: comment.fountain
+      scope: punctuation.definition.quote.begin.fountain
       push:
         - match: (?<!\s)(\+)
-          scope: comment.fountain
+          scope: punctuation.definition.quote.begin.fountain
           pop: true
         - match: $
           pop: true
