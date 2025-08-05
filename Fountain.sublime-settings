@@ -1,10 +1,10 @@
 {
-	"extensions":
-	[
+	"extensions": [
 		"fountain",
 		"ftn"
 	],
 	"word_wrap": true,
+	"wrap_width_style": "constant",
 	"wrap_width": 62,
 	"draw_centered": true,
 	"spell_check": false,

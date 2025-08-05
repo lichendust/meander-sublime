@@ -110,3 +110,31 @@ class meander_move_to_section(sublime_plugin.TextCommand):
 class meander_move_to_tag(sublime_plugin.TextCommand):
 	def run(self, edit, forward=True):
 		move_to_region(self.view, 'variable.annotation', forward)
+
+class meander_expand_to_sentence(sublime_plugin.TextCommand):
+	def run(self, edit):
+		selections = list(self.view.sel())
+		self.view.sel().clear()
+
+		for the_region in selections:
+			line_region = self.view.line(the_region)
+			line        = self.view.substr(line_region)
+			line_begin  = line_region.begin()
+
+			start = the_region.begin() - line_begin
+			end   = the_region.end()   - line_begin
+
+			for c in line[end:]:
+				if c == ".":
+					break
+				end += 1
+
+			for c in reversed(line[:start]):
+				if c == ".":
+					break
+				start -= 1
+
+			if start != end:
+				self.view.sel().add(sublime.Region(line_begin + start, line_begin + end + 1))
+			else:
+				self.view.sel().add(the_region)

@@ -14,8 +14,18 @@
 		}
 	},
 	{
-		"caption": "Meander: List Notes",
-		"command": "meander_list_notes"
+		"caption": "Meander: Next Tag",
+		"command": "meander_move_to_tag",
+		"args": {
+			"forward": true,
+		}
+	},
+	{
+		"caption": "Meander: Previous Tag",
+		"command": "meander_move_to_tag",
+		"args": {
+			"forward": false,
+		}
 	},
 	{
 		"caption": "Meander: Add Scene Numbers",
@@ -28,5 +38,9 @@
 	{
 		"caption": "Meander: Toggle Boneyards",
 		"command": "meander_toggle_boneyard"
+	},
+	{
+		"caption": "Selection: Expand to Sentence",
+		"command": "meander_expand_to_sentence"
 	}
 ]

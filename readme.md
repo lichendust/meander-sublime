@@ -14,11 +14,12 @@ This document will make reference to Fountain syntax and Meander features withou
 
 - [Commands](#commands)
 	- [Move to Section](#move-to-section)
-	- [Move to Note Tag](#move-to-note-tag)
+	- [Move to Tag](#move-to-tag)
 	- [Open Included Files](#open-included-files)
 	- [Add Scene Numbers](#add-scene-numbers)
 	- [Remove Scene Numbers](#remove-scene-numbers)
 	- [Toggle Boneyards](#toggle-boneyards)
+	- [Selection: Expand to Sentence](#selection-expand-to-sentence)
 - [Project Files](#project-files)
 - [Syntax](#syntax)
 	- [Scope List](#scope-list)
@@ -31,7 +32,8 @@ This document will make reference to Fountain syntax and Meander features withou
 
 ### Move to Section
 
-Sublime Command: `meander_move_to_section`
+- API Label: `meander_move_to_section`
+- Command Palette: `Meander: Next Section` / `Meander: Previous Section`
 
 Move to section adds forward/backward navigation between Scene Headings and Sections, facilitating quick navigation around a screenplay.  It mirrors the conventions of other `move_to` commands in Sublime:
 
@@ -60,9 +62,10 @@ The `include_scenes` argument will optionally add scene headings as navigable ta
 
 This scene switch allows the same command to be useful for both screenwriters with their Scene Headings and authors using Meander's manuscript mode, where Sections are used as chapter headings.
 
-### Move to Note Tag
+### Move to Tag
 
-Sublime Command: `meander_move_to_note_tag`
+- API Label: `meander_move_to_tag`
+- Command Palette: `Meander: Next Tag` / `Meander: Previous Tag`
 
 A note tag is a word, prefixed with an `@` symbol inside a Note or Boneyard, such as `@todo` or `@fixthis`.  They are not recognised by Fountain or Meander and are only present in this syntax package as a helpful visual aide to help important reminders stand out:
 
@@ -93,7 +96,8 @@ This command adds forward/backward navigation between these tags, facilitating q
 
 ### Open Included Files
 
-Sublime Command: `meander_open_include`
+- API Label: `meander_open_include`
+- Command Palette: `N/A`
 
 "Open Include" is a drop-in replacement for Sublime's "Goto Definition" that allows the user to open the file path of an `include` with a shortcut.
 
@@ -101,7 +105,8 @@ This is *enabled* by default within the package using F12, which idiomatically r
 
 ### Add Scene Numbers
 
-Sublime Command: `meander_add_scene_numbers`
+- API Label: `meander_add_scene_numbers`
+- Command Palette: `Meander: Add Scene Numbers`
 
 Adds `#1#` formatted scene numbers to every scene heading, **replacing any existing ones**.  This only provides integer numbering and does not cross over included files; it operates on the active buffer only.
 
@@ -109,15 +114,24 @@ This is obviously a feature better provided by Meander itself, but in the event 
 
 ### Remove Scene Numbers
 
-Sublime Command: `meander_remove_scene_numbers`
+- API Label: `meander_remove_scene_numbers`
+- Command Palette: `Meander: Remove Scene Numbers`
 
 Strips out any `#1#` scene numbers from the current file.  The removal command will catch any valid scene numbers, such as `#1#`, `#1-A#`, `#1.A-A#`.
 
 ### Toggle Boneyards
 
-Sublime Command: `meander_toggle_boneyard`
+- API Label: `meander_toggle_boneyard`
+- Command Palette: `Meander: Toggle Boneyards`
 
 Toggles (by folding) all `/* boneyard */` regions in the current file, useful for visually simplifying an in-progress document dense with notes and reminders.
+
+### Selection: Expand to Sentence
+
+- API Label: `meander_expand_to_sentence`
+- Command Palette: `Selection: Expand to Sentence`
+
+Expands any existing carets or selections to the sentences they overlap, using full stops (periods) as the delimiter.  The period that ends a selected sentence is included, as is the whitespace that *precedes* it — this is such that running this command and pressing backspace will cleanly remove the selected sentence(s).
 
 ## Project Files
 
@@ -177,16 +191,17 @@ The scope names are carefully selected to match other markup languages and use S
 
 ## Recommended Packages / Tweaks
 
-In addition to the Meander package, I recommend the following packages for a minimal, distractionless Sublime writing experience:
+In addition to the Meander package, I recommend the following packages for a great Sublime Text writing experience:
 
-- The [Alabaster Theme](https://github.com/tonsky/sublime-scheme-alabaster) for an extremely clean light-mode that works very well with Fountain.
-- The [Typewriter](https://github.com/alehandrof/Typewriter) package, which provides a typewriter-scroll mode that locks the scrolling position to the caret as you type.
+- The [Alabaster Theme](https://github.com/tonsky/sublime-scheme-alabaster) for extremely clean light and dark modes that work very well with Fountain.
+- The [Typewriter](https://github.com/alehandrof/Typewriter) package, which provides a 'focus' mode, locking the scrolling position to the caret as you type.
+- The [Tiny Count](https://github.com/lichendust/tinycount-sublime) package (mine!), which adds a comment-aware word counter in the status bar; for Fountain, this means your boneyards and notes aren't counted, giving you a more accurate reflection of your actual progress.
 
 ### Theme Colours
 
 Using the parent Fountain scope `text.fountain`, specific theme tweaks can be made for better customisation.
 
-Here's one I use personally, which inverts scene headings (and scene numbers) to make them extremely visible:
+Here's one I use personally, which inverts scene headings and scene numbers to make them extremely visible:
 
 ```json
 {
@@ -202,3 +217,5 @@ Here's one I use personally, which inverts scene headings (and scene numbers) to
 	"selection_foreground": "white",
 },
 ```
+
+(Insert your own scheme's colours to your liking.)
