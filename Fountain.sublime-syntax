@@ -41,7 +41,6 @@ contexts:
         - include: vars
         - include: note
         - include: boneyard
-        - include: markup
         - match: ^(?!\s)
           pop: true
         - match: ^$
